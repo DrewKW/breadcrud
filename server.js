@@ -1,4 +1,3 @@
-// DEPENDENCIES
 const express = require("express");
 
 // CONFIGURATION
@@ -6,12 +5,21 @@ require("dotenv").config();
 const PORT = process.env.PORT;
 const app = express();
 
-// MIDDLEWARE
-app.set('views', __dirname + '/views')
-app.set('view engine', 'jsx')
-app.engine('jsx', require('express-react-views').createEngine())
-app.use(express.static('public'))
+// DEPENDENCIES
+const methodOverride = require('method-override')
 
+
+// MIDDLEWARE
+app.use(express.static("public")); // Exposing the public folder to the client
+app.use(express.urlencoded({ extended: true })); // Encoding your requests so they are Javascript formatted
+
+
+app.use(methodOverride('_method'))
+
+
+app.set("views", __dirname + "/views");
+app.set("view engine", "jsx");
+app.engine("jsx", require("express-react-views").createEngine()); // Allowing your server to read your views folder and the jsx files inside of them
 
 // Routes
 app.get("/", (req, res) => {
@@ -23,9 +31,9 @@ const breadsController = require("./controllers/breads_controller.js");
 app.use("/breads", breadsController);
 
 // 404 Page
-app.get('*', (req, res) => {
-  res.send('404')
-})
+app.get("*", (req, res) => {
+  res.render("404");
+});
 
 app.listen(PORT, () => {
   console.log("nomming at port", PORT);
