@@ -3,17 +3,16 @@ const breads = express.Router();
 const Bread = require("../models/bread.js");
 
 // INDEX
-breads.get("/", (req, res) => {
-  console.log(Bread);
+breads.get('/', (req, res) => {
+  Bread.find()
+      .then(foundBreads => {
+          res.render('index', {
+              breads: foundBreads,
+              title: 'Index Page'
+          })
+      })
+})
 
-  Bread.find().then((foundBreads) => {
-    console.log(foundBreads);
-    res.render("index", {
-      breads: foundBreads,
-      title: "Index Page",
-    });
-  });
-});
 
 // NEW
 breads.get("/new", (req, res) => {
@@ -32,27 +31,33 @@ breads.get('/:id/edit', (req, res) => {
 
 
 // SHOW
-breads.get("/:id", (req, res) => {
-  Bread.findById(req.params.id).then((foundBread) => {
-    res.render("Show", { bread: foundBread });
-  });
-});
+breads.get('/:id', (req, res) => {
+  Bread.findById(req.params.id)
+    .then(foundBread => {
+      res.render('show', {
+        bread: foundBread
+      })
+    })
+    .catch(err => {
+      res.send('404')
+    })
+})
+
 
 // CREATE
-breads.post("/", (req, res) => {
-  if (!req.body.image) {
-    req.body.image = undefined;
+breads.post('/', (req, res) => {
+  if(!req.body.image) {
+      req.body.image = undefined 
   }
-
-  if (req.body.hasGluten == "on") {
-    req.body.hasGluten = true;
+  if(req.body.hasGluten === 'on') {
+    req.body.hasGluten = true
   } else {
-    req.body.hasGluten = false;
+    req.body.hasGluten = false
   }
-
-  Bread.create(req.body);
-  res.redirect("/breads");
+  Bread.create(req.body)
+  res.redirect('/breads')
 });
+
 
 // UPDATE
 breads.put('/:id', (req, res) => {
@@ -67,6 +72,7 @@ breads.put('/:id', (req, res) => {
       res.redirect(`/breads/${req.params.id}`) 
     })
 });
+
 
 
 // DELETE
